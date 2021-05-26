@@ -85,12 +85,15 @@ public class FedbTest {
                 row.Init(key.length());
                 row.AppendString(key);
                 row.AppendInt64(System.currentTimeMillis());
+                row.delete();
             }
             try {
                 executor.executeInsert(dbName, format, rows);
                 //counter ++;
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                rows.delete();
             }
         }
 
