@@ -32,7 +32,7 @@ public class FedbTest implements Test {
     static {
         try {
             Properties prop = new Properties();
-            prop.load(SingleStoreTest.class.getClassLoader().getResourceAsStream("benchmark.properties"));
+            prop.load(FedbTest.class.getClassLoader().getResourceAsStream("benchmark.properties"));
             zkCluster = prop.getProperty("zk_cluster");
             zkRootPath = prop.getProperty("zk_root_path");
             tableName = prop.getProperty("table_name");

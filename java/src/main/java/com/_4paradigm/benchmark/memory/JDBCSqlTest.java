@@ -14,10 +14,9 @@ public class JDBCSqlTest implements Test {
     private static int pkCnt;
     private static int tsCnt;
     private static String baseKey;
-    private static boolean needCreate;
     private static String method;
     private Connection cnn;
-    private String createDDL = "create table " + tableName + " (col1 varchar(20), col2 bigint, " +
+    private String createDDL = "create table if not exists" + tableName + " (col1 varchar(20), col2 bigint, " +
             "col3 float," +
             "col4 float," +
             "col5 varchar(12)," +
@@ -34,7 +33,6 @@ public class JDBCSqlTest implements Test {
             baseKey = prop.getProperty("base_key");
             pkCnt = Integer.parseInt(prop.getProperty("pk_cnt", "1"));
             tsCnt = Integer.parseInt(prop.getProperty("ts_cnt", "1"));
-            needCreate = Boolean.parseBoolean(prop.getProperty("need_create", "true"));
             method = prop.getProperty("method");
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,9 +47,7 @@ public class JDBCSqlTest implements Test {
             cnn = DriverManager.getConnection(connectURL);
             Statement st = cnn.createStatement();
             st = cnn.createStatement();
-            if (needCreate) {
-                st.execute(createDDL);
-            }
+            st.execute(createDDL);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
