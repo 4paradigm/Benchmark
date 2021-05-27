@@ -8,15 +8,12 @@ import com._4paradigm.sql.SQLInsertRows;
 
 import java.util.Properties;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public class FedbTest {
+public class FedbTest implements Test {
     private static String zkCluster;
     private static String zkRootPath;
     private static String tableName;
     private static String dbName;
-    private static int threadNum;
     private static int pkCnt;
     private static int tsCnt;
     private static String baseKey;
@@ -30,7 +27,6 @@ public class FedbTest {
             "index(key=(col1),ts=col2)) partitionnum=4;";
     private String dropDDL = "drop table " + tableName + " ;";
     private String format = "insert into " + tableName + " values(?, ?, 100.0, 200.0, 'hello world');";
-    private ExecutorService executorService;
     private Random random = new Random(System.currentTimeMillis());
 
     static {
@@ -42,7 +38,6 @@ public class FedbTest {
             tableName = prop.getProperty("table_name");
             dbName = prop.getProperty("db_name");
             baseKey = prop.getProperty("base_key");
-            threadNum = Integer.parseInt(prop.getProperty("thread_num", "1"));
             pkCnt = Integer.parseInt(prop.getProperty("pk_cnt", "1"));
             tsCnt = Integer.parseInt(prop.getProperty("ts_cnt", "1"));
             needCreate = Boolean.parseBoolean(prop.getProperty("need_create", "true"));
@@ -50,9 +45,8 @@ public class FedbTest {
             e.printStackTrace();
         }
     }
-
+    @Override
     public boolean init() {
-        executorService = Executors.newFixedThreadPool(threadNum);
         SdkOption sdkOption = new SdkOption();
         sdkOption.setSessionTimeout(30000);
         sdkOption.setZkCluster(zkCluster);
@@ -75,6 +69,7 @@ public class FedbTest {
         return true;
     }
 
+    @Override
     public void put() {
         while(true) {
             SQLInsertRows rows = executor.getInsertRows(dbName, format);
@@ -89,31 +84,11 @@ public class FedbTest {
             }
             try {
                 executor.executeInsert(dbName, format, rows);
-                //counter ++;
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 rows.delete();
             }
         }
-
     }
-
-    public void run() {
-        for (int i = 0; i < threadNum; i++) {
-            executorService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    put();
-                }
-            });
-        }
-    }
-
-    public static void main(String[] args) {
-        FedbTest test = new FedbTest();
-        test.init();
-        test.run();
-    }
-
 }
