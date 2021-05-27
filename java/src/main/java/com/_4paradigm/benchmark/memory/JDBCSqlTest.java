@@ -15,7 +15,6 @@ public class JDBCSqlTest implements Test {
     private static int tsCnt;
     private static String baseKey;
     private static String method;
-    private Connection cnn;
     private String createDDL = "create table if not exists" + tableName + " (col1 varchar(20), col2 bigint, " +
             "col3 float," +
             "col4 float," +
@@ -44,10 +43,11 @@ public class JDBCSqlTest implements Test {
             if (method.equals("voltdb")) {
                 Class.forName("org.voltdb.jdbc.Driver");
             }
-            cnn = DriverManager.getConnection(connectURL);
+            Connection cnn = DriverManager.getConnection(connectURL);
             Statement st = cnn.createStatement();
-            st = cnn.createStatement();
             st.execute(createDDL);
+            st.close();
+            cnn.close();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,6 +56,13 @@ public class JDBCSqlTest implements Test {
     }
 
     public void put() {
+        Connection cnn = null;
+        try {
+            cnn = DriverManager.getConnection(connectURL);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         while(true) {
             int num = random.nextInt(pkCnt) + pkCnt;
             String key = baseKey + String.valueOf(num);
