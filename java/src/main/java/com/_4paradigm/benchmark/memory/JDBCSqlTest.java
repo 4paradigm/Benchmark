@@ -15,7 +15,8 @@ public class JDBCSqlTest implements Test {
     private static int tsCnt;
     private static String baseKey;
     private static String method;
-    private String createDDL = "create table if not exists" + tableName + " (col1 varchar(20), col2 bigint, " +
+    private static boolean needCreate;
+    private String createDDL = "create table " + tableName + " (col1 varchar(20), col2 bigint, " +
             "col3 float," +
             "col4 float," +
             "col5 varchar(12)," +
@@ -33,6 +34,7 @@ public class JDBCSqlTest implements Test {
             pkCnt = Integer.parseInt(prop.getProperty("pk_cnt", "1"));
             tsCnt = Integer.parseInt(prop.getProperty("ts_cnt", "1"));
             method = prop.getProperty("method");
+            needCreate = Boolean.parseBoolean(prop.getProperty("need_create"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,11 +45,13 @@ public class JDBCSqlTest implements Test {
             if (method.equals("voltdb")) {
                 Class.forName("org.voltdb.jdbc.Driver");
             }
-            Connection cnn = DriverManager.getConnection(connectURL);
-            Statement st = cnn.createStatement();
-            st.execute(createDDL);
-            st.close();
-            cnn.close();
+            if (needCreate) {
+                Connection cnn = DriverManager.getConnection(connectURL);
+                Statement st = cnn.createStatement();
+                st.execute(createDDL);
+                st.close();
+                cnn.close();
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();
