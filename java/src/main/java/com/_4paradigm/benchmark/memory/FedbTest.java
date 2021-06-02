@@ -1,10 +1,10 @@
 package com._4paradigm.benchmark.memory;
 
-import com._4paradigm.sql.sdk.SqlExecutor;
-import com._4paradigm.sql.sdk.SdkOption;
-import com._4paradigm.sql.sdk.impl.SqlClusterExecutor;
-import com._4paradigm.sql.SQLInsertRow;
-import com._4paradigm.sql.SQLInsertRows;
+import com._4paradigm.hybridsql.fedb.sdk.SqlExecutor;
+import com._4paradigm.hybridsql.fedb.sdk.SdkOption;
+import com._4paradigm.hybridsql.fedb.sdk.impl.SqlClusterExecutor;
+import com._4paradigm.hybridsql.fedb.SQLInsertRow;
+import com._4paradigm.hybridsql.fedb.SQLInsertRows;
 
 import java.util.Properties;
 import java.util.Random;

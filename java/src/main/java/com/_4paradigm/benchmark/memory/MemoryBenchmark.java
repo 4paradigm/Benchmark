@@ -21,6 +21,8 @@ public class MemoryBenchmark {
         Test tmp = null;
         if (method.equals("rtidb")) {
             tmp = new FedbTest();
+        } else if (method.equals("redis")) {
+            tmp = new RedisTest();
         } else {
             tmp = new JDBCSqlTest();
         }
